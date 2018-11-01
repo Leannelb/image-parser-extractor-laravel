@@ -18,7 +18,7 @@ class ImageController extends BaseController
 {
     function getImageLinks(){
         
-        //Defining a global HTTP_CONTEXT variable - needed for plugin use
+        //Defining a global var HTTP_CONTEXT variable - needed for plugin use
         $HTTP_CONTEXT = stream_context_create([
             'http'=>array( 
                 'method'=>"GET", 
@@ -31,6 +31,7 @@ class ImageController extends BaseController
         //need to have a cache set up for this plugin to work
         hQuery::$cache_path = "/Users/leanne/Sites/php-script/image-script/imageScriptSLM/resources/cache";
 
+        // VAR DECLARATIONS 
         // Extract links and images, define vars and arrays
         $links  = array();
         $images = array();
@@ -52,17 +53,10 @@ class ImageController extends BaseController
             $proccesedLinks[] = ['title' => $link->find('a')->text(),'link'=>$href];
 
         }
-
         //pulls the img link for each blog post
         foreach($proccesedLinks as $link){
-            $this->getImageFromBlog($link);
-            // $content = $link->link;
-
-            // dd($content);
-            
+            $this->getImageFromBlog($link);  
          }
-
-        
     }
     //funtion to pull the img link for each blog post
     function getImageFromBlog(&$proccesedLink){
@@ -79,15 +73,8 @@ class ImageController extends BaseController
                 break;
             }
         }
-
-       
-        // $url = 'http://example.com/image.php';
-        // $img = '/my/folder/flower.gif';
-        // file_put_contents($img, file_get_contents($url));
-        // $processedMetaImages[] = ['image'=>$doc->find('meta.og:image')->text()];
-        // dd($processedMetaImages);
     }
-    
+    //this function downloads the images to a folder on computer
     function saveImage($key,$imageLink){
         $imageContent = file_get_contents($imageLink);
         $imagePath = '/Users/leanne/Sites/php-script/image-script/imageScriptSLM/resources/image-local-links';
@@ -95,5 +82,3 @@ class ImageController extends BaseController
         file_put_contents($imagePath.'/'.$imageName, $imageContent);
     }
 }
-
-// <meta property="og:image" content="https://shortletsmalta.files.wordpress.com/2018/07/ffm.jpg?w=1200">
