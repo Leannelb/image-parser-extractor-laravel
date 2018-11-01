@@ -17,7 +17,7 @@ class ImageController extends BaseController
 {
     function getImageLinks(){
         
-        //Defining a global HTTP_CONTEXT variable
+        //Defining a global HTTP_CONTEXT variable - needed for plugin use
         $HTTP_CONTEXT = stream_context_create([
             'http'=>array( 
                 'method'=>"GET", 
@@ -36,7 +36,7 @@ class ImageController extends BaseController
         $titles = array();
         //To use  global var from outside function, write global infromt of the var you intend to use as a global (not when initally defining it).
         global $HTTP_CONTEXT;
-        //This array holds (a)->href, the string inide the href, i.e. an array of the blog links.
+        //This array holds (a)->href, the string inside the href, i.e. an array of the blog links.
         $proccesedLinks = [];
 
         $doc = hQuery::fromFile('https://blog.shortletsmalta.com/', false, $HTTP_CONTEXT);
@@ -50,14 +50,32 @@ class ImageController extends BaseController
             $href = $link->find('a')->href; // ArrayAccess
             $proccesedLinks[] = ['title' => $link->find('a')->text(),'link'=>$href];
         }
-        dd($this->getImageFromBlog($proccesedLinks[0]));
-        //dd($proccesedLinks);
+
+        foreach($proccesedLinks as $link){
+            $this->getImageFromBlog($link);
+        }
+        
+        dd($proccesedLinks);
     }
 
-    function getImageFromBlog($proccesedLink){
+    function getImageFromBlog(&$proccesedLink){
         global $HTTP_CONTEXT;
         $doc = hQuery::fromFile($proccesedLink['link'], false, $HTTP_CONTEXT);
-        return $doc;
-
+        // dd($doc);
+        $metaTags = $doc->find('meta:property=og:image');
+        foreach($metaTags as $key=>$meta){
+            $metaContent = $meta->attr('content');
+            if(strpos($metaContent,'http') > -1 && strpos($metaContent,'jpg') > -1 ){
+                // echo $key.' '.$meta->attr('content').'<br>';
+                $proccesedLink['imageLink']= $metaContent;
+                break;
+            }
+        }
+        return $proccesedLink;
+        // $processedMetaImages[] = ['image'=>$doc->find('meta.og:image')->text()];
+        // dd($processedMetaImages);
     }
+
 }
+
+// <meta property="og:image" content="https://shortletsmalta.files.wordpress.com/2018/07/ffm.jpg?w=1200">
