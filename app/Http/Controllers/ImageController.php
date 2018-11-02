@@ -42,6 +42,17 @@ class ImageController extends BaseController
         $proccesedLinks = [];
 
         $doc = hQuery::fromFile('https://blog.shortletsmalta.com/page1/', false, $HTTP_CONTEXT);
+   
+        //LOOP THROUGH ALL PAGES - 6
+        // for($i=1; $i<7; $i++ ){
+        //     $URL = 'https://blog.shortletsmalta.com/page';
+        //     $completeURL = "{$URL}{$i}";
+        // }
+        
+        //     foreach($this.$completeURL as $currentURL){
+        //         $doc = hQuery::fromFile($currentURL, false, $HTTP_CONTEXT);
+        //     }
+
 
         // Find all h2 with the class entry-title, i.e. links to blog posts
         $links = $doc->find('h2.entry-title');
@@ -58,6 +69,7 @@ class ImageController extends BaseController
             $this->getImageFromBlog($link);  
          }
     }
+
     //funtion to pull the img link for each blog post
     function getImageFromBlog(&$proccesedLink){
         global $HTTP_CONTEXT;
@@ -65,20 +77,69 @@ class ImageController extends BaseController
         // dd($doc);
         $metaTags = $doc->find('meta:property=og:image');
         foreach($metaTags as $key=>$meta){
+
             $metaContent = $meta->attr('content');
             if(strpos($metaContent,'http') > -1 && strpos($metaContent,'jpg') > -1 || strpos($metaContent,'png') > -1){
                 // echo $key.' '.$meta->attr('content').'<br>';
                 $proccesedLink['imageLink']= $metaContent;
-                $this->saveImage($key,$proccesedLink['imageLink']);
+
+
+                $this->saveImage($key,$proccesedLink['imageLink'], $proccesedLink['title']);
+
                 break;
             }
         }
+
+        return null;
     }
     //this function downloads the images to a folder on computer
-    function saveImage($key,$imageLink){
+    function saveImage($key,$imageLink, string $title){
         $imageContent = file_get_contents($imageLink);
-        $imagePath = '/Users/leanne/Sites/php-script/image-script/imageScriptSLM/resources/image-local-links';
-        $imageName = "$key.".(strpos($imageLink,'png') ? 'png' : 'jpg' );
+        $imagePath = '/Users/leanne/Sites/php-script/image-script/imageScriptSLM/storage/image_local_links';
+        $imageExtension = strpos($imageLink,'png') ? 'png' : 'jpg';
+        $imageName = "{$key}.{$imageExtension}";
+
+        $imageInstance = Image::firstOrCreate(['name' => $key]);
+        $imageInstance->update(['extension' => $imageExtension, 'title' => $title]);
         file_put_contents($imagePath.'/'.$imageName, $imageContent);
+        
+    }
+
+    // public function assignBlogIds()
+    // {
+    //     echo "Hi im in here";
+    //     $blogArray[] = DB::table('blog')->get();
+    //     $picsArray[] = DB::table('shortlets_images')->get();
+    //     foreach($blogArray as $blog)
+    //     {
+    //         if($blogArray['title'] == $picsArray['title'])
+    //         {
+    //             DB::table('shortlets_images')->insert(
+    //                 [$blogArray['blog_id'] => $picsArray['blog_id']]
+    //             );
+    //         }
+    //     }
+    //     // $imageTitles = DB::table('shortlets_images.title')->get();
+    //     // $titlesOfBlogs = DB::table('blog')->where('blog.title' == $imageTitles);
+    // }
+
+
+    public function assignBlogIds()
+    {
+        $blogArray[] = DB::table('blog')->get();
+        $picsArray[] = DB::table('shortlets_images')->get();
+        foreach($blogArray as $blog)
+        {
+            foreach($picsArray as $pics)
+            {
+                if($blog['title'] == $picsArray['title'])
+                {
+                    DB::table('shortlets_images')->insert(
+                        [$blogArray['blog_id'] => $picsArray['blog_id']]
+                    );
+                }
+            }
+            
+        }
     }
 }
