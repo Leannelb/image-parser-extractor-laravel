@@ -44,14 +44,18 @@ class ImageController extends BaseController
         $doc = hQuery::fromFile('https://blog.shortletsmalta.com/page1/', false, $HTTP_CONTEXT);
    
         //LOOP THROUGH ALL PAGES - 6
-        // for($i=1; $i<7; $i++ ){
-        //     $URL = 'https://blog.shortletsmalta.com/page';
-        //     $completeURL = "{$URL}{$i}";
-        // }
+        for($pageNum=1; $pageNum<=6; $pageNum++ ){
+            $URL = 'https://blog.shortletsmalta.com/page';
+            $page = (string)$pageNum;
+            $completeURL = "{$URL}{$page}";
+        }
         
-        //     foreach($this.$completeURL as $currentURL){
-        //         $doc = hQuery::fromFile($currentURL, false, $HTTP_CONTEXT);
-        //     }
+        foreach($completeURL as $currentURL){
+            $doc = hQuery::fromFile($currentURL, false, $HTTP_CONTEXT);
+        }
+    
+    
+       
 
 
         // Find all h2 with the class entry-title, i.e. links to blog posts
