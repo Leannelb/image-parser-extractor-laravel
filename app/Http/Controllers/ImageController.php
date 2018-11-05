@@ -42,21 +42,6 @@ class ImageController extends BaseController
         $proccesedLinks = [];
 
         $doc = hQuery::fromFile('https://blog.shortletsmalta.com/page1/', false, $HTTP_CONTEXT);
-   
-        //LOOP THROUGH ALL PAGES - 6
-        for($pageNum=1; $pageNum<=6; $pageNum++ ){
-            $URL = 'https://blog.shortletsmalta.com/page';
-            $page = (string)$pageNum;
-            $completeURL = "{$URL}{$page}";
-        }
-        
-        foreach($completeURL as $currentURL){
-            $doc = hQuery::fromFile($currentURL, false, $HTTP_CONTEXT);
-        }
-    
-    
-       
-
 
         // Find all h2 with the class entry-title, i.e. links to blog posts
         $links = $doc->find('h2.entry-title');
@@ -108,25 +93,6 @@ class ImageController extends BaseController
         file_put_contents($imagePath.'/'.$imageName, $imageContent);
         
     }
-
-    // public function assignBlogIds()
-    // {
-    //     echo "Hi im in here";
-    //     $blogArray[] = DB::table('blog')->get();
-    //     $picsArray[] = DB::table('shortlets_images')->get();
-    //     foreach($blogArray as $blog)
-    //     {
-    //         if($blogArray['title'] == $picsArray['title'])
-    //         {
-    //             DB::table('shortlets_images')->insert(
-    //                 [$blogArray['blog_id'] => $picsArray['blog_id']]
-    //             );
-    //         }
-    //     }
-    //     // $imageTitles = DB::table('shortlets_images.title')->get();
-    //     // $titlesOfBlogs = DB::table('blog')->where('blog.title' == $imageTitles);
-    // }
-
 
     public function assignBlogIds()
     {
