@@ -19,7 +19,8 @@ class Blog extends Model
         'client_id', 
         'status_id', 
         'site_id', 
-        'author_id'
+        'author_id',
+        'image_url'	
     );
 
     protected $table = 'blog';
