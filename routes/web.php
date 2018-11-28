@@ -17,8 +17,3 @@ Route::get('/', function () {
 
 Route::get('import-example', 'ImageController@getImageLinks');
 
-Route::get('rename', 'RenameController@blogsByPostID');
-
-Route::get('meta', 'RenameController@extractMetaFromUrl');
-
-

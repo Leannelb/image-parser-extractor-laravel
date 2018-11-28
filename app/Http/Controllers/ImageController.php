@@ -1,4 +1,9 @@
-<!-- <php
+<?php
+/*
+*   Used plugin https://github.com/duzun/hQuery.php for parsing HTML documents
+*
+*/
+
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -107,4 +112,4 @@ class ImageController extends BaseController
             
         }
     }
-} -->
+}
